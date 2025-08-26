@@ -61,13 +61,13 @@ elseif("${UAVS3D_TARGET_CPU}" MATCHES "armv7")
   enable_language(ASM)
   
   # Add NEON support for ARMv7
-  set(ARMV7_NEON_FLAGS "-mfpu=neon -mfloat-abi=hard")
-if(NOT CMAKE_C_FLAGS MATCHES "-mfloat-abi=")
-    set(ARMV7_NEON_FLAGS "${ARMV7_NEON_FLAGS} -mfloat-abi=hard")
-  endif()
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ARMV7_NEON_FLAGS}")
-  set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} ${ARMV7_NEON_FLAGS}")
-  message(STATUS "ARMv7 NEON flags added: ${ARMV7_NEON_FLAGS}")
+  # Use hard float ABI to match the musleabihf toolchain
+  # Use a specific CPU that supports NEON and hard float
+  set(ARMV7_FLAGS "-mcpu=cortex-a9 -mfpu=neon -mfloat-abi=hard")
+  
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ARMV7_FLAGS}")
+  set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} ${ARMV7_FLAGS}")
+  message(STATUS "ARMv7-A NEON flags added: ${ARMV7_FLAGS}")
   
 elseif("${UAVS3D_TARGET_CPU}" MATCHES "arm64")
   list(APPEND UAVS3D_ASM_FILES "./decore/arm64/arm64.c")
