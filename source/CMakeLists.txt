@@ -1,4 +1,3 @@
-
 set(LIBNAME uavs3d)
 
 # check cpu
@@ -60,6 +59,16 @@ elseif("${UAVS3D_TARGET_CPU}" MATCHES "armv7")
 
   add_definitions(-D _armv7a)
   enable_language(ASM)
+  
+  # Add NEON support for ARMv7
+  set(ARMV7_NEON_FLAGS "-mfpu=neon -mfloat-abi=hard")
+if(NOT CMAKE_C_FLAGS MATCHES "-mfloat-abi=")
+    set(ARMV7_NEON_FLAGS "${ARMV7_NEON_FLAGS} -mfloat-abi=hard")
+  endif()
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ARMV7_NEON_FLAGS}")
+  set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} ${ARMV7_NEON_FLAGS}")
+  message(STATUS "ARMv7 NEON flags added: ${ARMV7_NEON_FLAGS}")
+  
 elseif("${UAVS3D_TARGET_CPU}" MATCHES "arm64")
   list(APPEND UAVS3D_ASM_FILES "./decore/arm64/arm64.c")
   list(APPEND UAVS3D_ASM_FILES "./decore/arm64/alf_arm64.S")
